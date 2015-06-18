@@ -79,6 +79,9 @@ public class SwipeMenuListView extends ListView {
 					mTouchView.smoothCloseMenu();
 				}
 			}
+			
+			
+			
 		});
 	}
 
@@ -103,6 +106,10 @@ public class SwipeMenuListView extends ListView {
 		return super.onInterceptTouchEvent(ev);
 	}
 
+	public boolean isPositionEnable(int pos){
+		return getAdapter().isEnabled(pos);
+	}
+	
 	@Override
 	public boolean onTouchEvent(MotionEvent ev) {
 		if (ev.getAction() != MotionEvent.ACTION_DOWN && mTouchView == null)
@@ -121,7 +128,8 @@ public class SwipeMenuListView extends ListView {
 			if (mTouchPosition == oldPos && mTouchView != null
 					&& mTouchView.isOpen()) {
 				mTouchState = TOUCH_STATE_X;
-				mTouchView.onSwipe(ev);
+				if (isPositionEnable(mTouchPosition)) // gil
+					mTouchView.onSwipe(ev);
 				return true;
 			}
 
@@ -141,7 +149,8 @@ public class SwipeMenuListView extends ListView {
 				mTouchView = (SwipeMenuLayout) view;
 			}
 			if (mTouchView != null) {
-				mTouchView.onSwipe(ev);
+				if (isPositionEnable(mTouchPosition)) // gil
+					mTouchView.onSwipe(ev);
 			}
 			break;
 		case MotionEvent.ACTION_MOVE:
@@ -149,7 +158,8 @@ public class SwipeMenuListView extends ListView {
 			float dx = Math.abs((ev.getX() - mDownX));
 			if (mTouchState == TOUCH_STATE_X) {
 				if (mTouchView != null) {
-					mTouchView.onSwipe(ev);
+					if (isPositionEnable(mTouchPosition)) // gil
+						mTouchView.onSwipe(ev);
 				}
 				getSelector().setState(new int[] { 0 });
 				ev.setAction(MotionEvent.ACTION_CANCEL);
@@ -169,7 +179,8 @@ public class SwipeMenuListView extends ListView {
 		case MotionEvent.ACTION_UP:
 			if (mTouchState == TOUCH_STATE_X) {
 				if (mTouchView != null) {
-					mTouchView.onSwipe(ev);
+					if (isPositionEnable(mTouchPosition)) // gil
+						mTouchView.onSwipe(ev);
 					if (!mTouchView.isOpen()) {
 						mTouchPosition = -1;
 						mTouchView = null;
@@ -188,6 +199,7 @@ public class SwipeMenuListView extends ListView {
 	}
 
 	public void smoothOpenMenu(int position) {
+		
 		if (position >= getFirstVisiblePosition()
 				&& position <= getLastVisiblePosition()) {
 			View view = getChildAt(position - getFirstVisiblePosition());
